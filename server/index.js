@@ -1,26 +1,19 @@
 const express = require('express');
-const mongoose  = require('mongoose');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const route = require('./routes/userRoute')
+const route = require('./routes/userRoute');
 const app = express();
+require('./config/db'); // just to trigger connection logging
+
+dotenv.config();
 app.use(bodyParser.json());
 app.use(cors());
-dotenv.config();
 
-const port = process.env.PORT || 7000
+const port = process.env.PORT || 7000;
 
-const URL = process.env.MONGOURL;
+app.use("/api/v1/users", route);
 
-mongoose.connect(URL).then(()=>{
-    console.log("DB connected succesfully!!!")
-}).catch((error)=>{
-    console.log(error)
-})
-
-app.use("/api",route);
-
-app.listen(port , ()=>{
-    console.log("server is running on : ", port)
-})
+app.listen(port, () => {
+  console.log("Server is running on:", port);
+});

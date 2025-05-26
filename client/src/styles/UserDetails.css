@@ -1,0 +1,59 @@
+/* UserDetails.css */
+.user-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-md);
+  max-width: 500px;
+}
+
+.user-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: var(--color-primary-light);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.user-initials {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.user-info-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.user-info-item {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--spacing-sm);
+}
+
+.info-label {
+  font-weight: 600;
+  color: var(--color-text-light);
+  width: 100px;
+}
+
+.info-value {
+  flex: 1;
+}
+
+.info-value.id-value {
+  font-family: monospace;
+  word-break: break-all;
+}
+
+.user-details-error {
+  color: var(--color-error);
+  text-align: center;
+  padding: var(--spacing-lg);
+}

@@ -1,0 +1,48 @@
+/* UserItem.css */
+.user-item {
+  display: flex;
+  padding: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color var(--transition-fast);
+  cursor: pointer;
+}
+
+.user-item:hover {
+  background-color: rgba(51, 102, 204, 0.05);
+}
+
+.user-item:last-child {
+  border-bottom: none;
+}
+
+.user-item .column-id {
+  color: var(--color-text-lighter);
+  font-family: monospace;
+  font-size: var(--font-size-sm);
+}
+
+.button-icon-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.button-edit {
+  background-color: var(--color-secondary);
+  color: white;
+}
+
+.button-edit:hover {
+  background-color: var(--color-secondary-dark);
+}
+
+.button-delete {
+  background-color: var(--color-error);
+  color: white;
+}
+
+.button-delete:hover {
+  background-color: #c82333;
+}

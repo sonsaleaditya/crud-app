@@ -1,82 +1,78 @@
-const User = require("../models/user.model");
+const db = require('../config/db');
 
-const create = async (req, res) => {
-  try {
-    // get data from user
-    const userData = new User(req.body);
+// CREATE
+const create = (req, res) => {
+  if(!req.body) 
+    return res.status(400).json({ success: false, msg: 'No data provided' }); 
 
-    //whether data is passed or not
-    if (!userData) {
-      return res.status(404).json({ msg: "User data not found!!" });
-    }
-    // save if passed
-    const savedData = await userData.save();
-    res.status(200).json(savedData);
-    console.log("data added succesfully")
-  } catch (error) {
-    res.status(500).json({ error: error });
-  }
+  const { name, email } = req.body;
+  if (!name || !email) 
+    return res.status(400).json({ success: false, msg: 'All fields required' });
+
+  const sql = 'INSERT INTO users (name, email) VALUES (?, ?)';
+  db.query(sql, [name, email], (err, result) => {
+    if (err) 
+      return res.status(500).json({ success: false, error: err });
+    res.status(201).json({ success: true, msg: 'User created', id: result.insertId });
+  });
 };
 
-const getAll = async (req, res) => {
-  try {
-    const userData = await User.find();
-    if (!userData) {
-      return res.status(404).json({ msg: " user not found" });
-    } else {
-      res.status(200).json(userData);
-    }
-  } catch (error) {
-    res.status(500).json({ error: error });
-  }
+// READ ALL
+const getAll = (req, res) => {
+  db.query('SELECT * FROM users', (err, results) => {
+    if (err) 
+      return res.status(500).json({ success: false, error: err });
+    res.status(200).json({ success: true, data: results });
+  });
 };
 
-const getOne= async (req,res)=>{
-  try {
-    const id = req.params.id;
-     const userExist = await User.findById(id);
-  if(!userExist){
-    return res.status(404).json({msg : "user data not found!!"})
-  }else{
-    res.status(200).json(userExist);
-  }
-  } catch (error) {
-    res.status(500).json({error : error});
-  }
- 
-}
+// READ ONE
+const getOne = (req, res) => {
+  const id = req.params.id;
+  db.query('SELECT * FROM users WHERE id = ?', [id], (err, results) => {
+    if (err) 
+      return res.status(500).json({ success: false, error: err });
+    if (results.length === 0) 
+      return res.status(404).json({ success: false, msg: 'User not found' });
+    res.status(200).json({ success: true, data: results[0] });
+  });
+};
 
-const update = async(req,res)=>{
-  try {
-      const id = req.params.id;
-      const UserExist  = await User.findById(id);
-      // check whether data exist or not 
-      if(!UserExist){
-        return res.status(401).json({msg : "User not found !1"})
-      }else{
-        // if exist update it
-        const updatedData = await User.findByIdAndUpdate(id,req.body,{new : true});
-        res.status(200).json({msg : "User Updated Succesfully !"});
+// UPDATE
+const update = (req, res) => {
+  const id = req.params.id;
+  const { name, email } = req.body;
+  if (!name || !email) 
+    return res.status(400).json({ success: false, msg: 'All fields required' });
 
-      }
-  } catch (error) {
-    res.status(500).json({error : error});
-    
-  }
-}
+  const sql = 'UPDATE users SET name = ?, email = ? WHERE id = ?';
+  db.query(sql, [name, email, id], (err, result) => {
+    if (err) 
+      return res.status(500).json({ success: false, error: err });
+    if (result.affectedRows === 0) 
+      return res.status(404).json({ success: false, msg: 'User not found' });
+    res.status(200).json({ success: true, msg: 'User updated' });
+  });
+};
 
-const deleteUser = async(req,res)=>{
-  try {
-    const id = req.params.id;
-    const userExist = User.findById(id);
-    if(!userExist){
-      return res.status(401).json({msg : " user not found !!"})
-    }else{
-     await User.findByIdAndDelete(id);
-     res.status(200).json({msg : "user deleted succesfully !!"})
-    }
-  } catch (error) {
-    res.status(500).json({error: error});
-  }
-}
-module.exports = {getAll,create,getOne,update,deleteUser};
+// DELETE
+const deleteUser = (req, res) => {
+  const id = req.params.id;
+  db.query('DELETE FROM users WHERE id = ?', [id], (err, result) => {
+    if (err) 
+      return res.status(500).json({ success: false, error: err });
+    if (result.affectedRows === 0) 
+      return res.status(404).json({ success: false, msg: 'User not found' });
+    res.status(200).json({ success: true, msg: 'User deleted' });
+  });
+};
+
+const deleteAllUser = (req, res) => {
+  db.query('DELETE FROM users', (err, result) => {
+    if (err) 
+      return res.status(500).json({ success: false, error: err });
+    res.status(200).json({ success: true, msg: 'All users deleted' });
+  });
+};
+
+module.exports = { create, getAll, getOne, update, deleteUser, deleteAllUser };
